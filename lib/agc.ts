@@ -1,5 +1,7 @@
 import NodeCache from "node-cache"
 
+import { Song } from "./data"; // Import the Song interface
+
 class AGC {
   private cache: NodeCache
 
@@ -7,7 +9,7 @@ class AGC {
     this.cache = new NodeCache({ stdTTL: 3600 }) // Cache for 1 hour
   }
 
-  async getSearch(query: string) {
+  async getSearch(query: string): Promise<Song[]> {
     const q = encodeURIComponent(query)
     const cacheKey = `search_${this.md5(q)}`
     let items = this.cache.get(cacheKey)
@@ -52,7 +54,7 @@ class AGC {
     return items || []
   }
 
-  async getDownload(id: string) {
+  async getDownload(id: string): Promise<Song | null> {
     const cacheKey = `download_${id}`
     let data = this.cache.get(cacheKey)
 
@@ -79,9 +81,10 @@ class AGC {
                 canplay: result.canplay,
                 size: result.size,
                 protected_embed: result.protected_embed,
-              }
+                description: result.description, // Ensure description is included
+              } as Song; // Type assertion to Song
 
-              this.cache.set(cacheKey, data)
+              this.cache.set(cacheKey, data); // Cache the downloaded song data
             }
           } catch (parseError) {
             console.error("JSON parse error:", parseError)
@@ -100,7 +103,7 @@ class AGC {
     return data
   }
 
-  async getRelated(id: string) {
+  async getRelated(id: string): Promise<Song[]> {
     const cacheKey = `related_${id}`
     let items = this.cache.get(cacheKey)
 
@@ -162,4 +165,3 @@ class AGC {
 }
 
 export const agc = new AGC()
-

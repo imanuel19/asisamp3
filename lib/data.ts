@@ -1,7 +1,19 @@
 import { agc } from "./agc"
 
+export interface Song {
+  id: string;
+  title: string;
+  image: string;
+  duration: string;
+  views: string;
+  uploaded: string;
+  description: string;
+  size?: string; // Optional property
+  protected_embed?: boolean; // Optional property
+}
+
 // Fallback data in case the API fails
-const fallbackSongs = [
+const fallbackSongs: Song[] = [
   {
     id: "sample1",
     title: "Sample Song 1",
@@ -31,7 +43,7 @@ const fallbackSongs = [
   },
 ]
 
-export async function getTopSongs() {
+export async function getTopSongs(): Promise<Song[]> {
   try {
     const songs = await agc.getSearch("top songs")
     return songs && songs.length > 0 ? songs : fallbackSongs
@@ -46,7 +58,7 @@ export async function getRecentSearches() {
   return ["pop music", "rock songs", "dance hits", "top 40"]
 }
 
-export async function searchSongs(query: string) {
+export async function searchSongs(query: string): Promise<Song[]> {
   try {
     const songs = await agc.getSearch(query)
     return songs && songs.length > 0 ? songs : fallbackSongs
@@ -56,7 +68,7 @@ export async function searchSongs(query: string) {
   }
 }
 
-export async function getSongById(id: string) {
+export async function getSongById(id: string): Promise<Song> {
   try {
     const song = await agc.getDownload(id)
     if (song) return song
@@ -89,7 +101,7 @@ export async function getSongById(id: string) {
   }
 }
 
-export async function getRelatedSongs(id: string) {
+export async function getRelatedSongs(id: string): Promise<Song[]> {
   try {
     const songs = await agc.getRelated(id)
     return songs && songs.length > 0 ? songs : fallbackSongs
@@ -99,7 +111,7 @@ export async function getRelatedSongs(id: string) {
   }
 }
 
-export async function getPlaylist(slug: string) {
+export async function getPlaylist(slug: string): Promise<{ title: string; slug: string; description: string; songs: Song[] } | null> {
   // For now, we'll return a playlist with fallback songs
   if (slug === "top-hits") {
     return {
@@ -112,7 +124,7 @@ export async function getPlaylist(slug: string) {
   return null
 }
 
-export async function getPage(slug: string) {
+export async function getPage(slug: string): Promise<{ title: string; content: string } | null> {
   // Static pages content
   const pages: Record<string, { title: string; content: string }> = {
     about: {
@@ -140,4 +152,3 @@ export async function getPage(slug: string) {
   }
   return pages[slug] || null
 }
-

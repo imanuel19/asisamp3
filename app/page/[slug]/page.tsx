@@ -1,14 +1,16 @@
-import config from "@/config/default/config.json"
-import { getPage } from "@/lib/data"
-import type { Metadata } from "next"
-import FloatingMenu from "@/components/FloatingMenu"
+export const runtime = 'edge';
+
+import config from "'config/default/config.json'";
+import { getPage } from "'lib/data'";
+import type { Metadata } from "next";
+import FloatingMenu from "'components/FloatingMenu'";
 
 type Props = {
   params: { slug: string }
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const page = await getPage(params.slug)
+  const page = await getPage(params.slug);
 
   if (!page) {
     return {
@@ -25,7 +27,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function StaticPage({ params }: Props) {
-  const page = await getPage(params.slug)
+  const page = await getPage(params.slug);
 
   if (!page) {
     return (
@@ -49,4 +51,3 @@ export default async function StaticPage({ params }: Props) {
     </div>
   )
 }
-
